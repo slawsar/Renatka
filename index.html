@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odliczanie do spotkania z Renatką</title>
+    <style>
+        /* Resetowanie stylów i ustawienia podstawowe */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+        
+        /* Stylizacja nagłówka */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #d41c54;
+        }
+        
+        /* Kontener serca z efektem pulsowania */
+        .heart-container {
+            margin: 2rem 0;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Tworzenie kształtu serca za pomocą CSS */
+        .heart {
+            background-color: rgba(220, 20, 60, 0.8);
+            display: inline-block;
+            position: relative;
+            width: 300px;
+            height: 300px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 40px rgba(220, 20, 60, 0.5);
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: "";
+            background-color: rgba(220, 20, 60, 0.8);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -150px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -150px;
+        }
+        
+        /* Kontener dla zegara wewnątrz serca */
+        .countdown-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            z-index: 10;
+            width: 260px;
+            text-align: center;
+        }
+        
+        /* Stylizacja zegara odliczającego */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .countdown div {
+            margin: 0 10px;
+        }
+        
+        .countdown span {
+            display: block;
+        }
+        
+        .countdown .time {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .countdown .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        /* Stylizacja dynamicznej wiadomości miłosnej */
+        .love-message {
+            font-size: 1.3rem;
+            font-style: italic;
+            text-align: center;
+            margin: 2rem 0;
+            min-height: 4rem;
+            max-width: 800px;
+            padding: 0 1rem;
+            line-height: 1.5;
+            color: #d41c54;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Efekt latających serc w tle */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .float-heart {
+            position: absolute;
+            color: rgba(220, 20, 60, 0.3);
+            font-size: 1.5rem;
+            animation: float-up linear infinite;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsywność dla mniejszych ekranów */
+        @media (max-width: 700px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .heart {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .heart:before,
+            .heart:after {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .heart:before {
+                top: -100px;
+            }
+            
+            .heart:after {
+                left: -100px;
+            }
+            
+            .countdown-container {
+                width: 180px;
+            }
+            
+            .countdown .time {
+                font-size: 1.5rem;
+            }
+            
+            .love-message {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Odliczanie do spotkania z Renatką</h1>
+    
+    <div class="heart-container">
+        <div class="heart">
+            <div class="countdown-container">
+                <div class="countdown">
+                    <div>
+                        <span class="time" id="days">00</span>
+                        <span class="label">Dni</span>
+                    </div>
+                    <div>
+                        <span class="time" id="hours">00</span>
+                        <span class="label">Godzin</span>
+                    </div>
+                    <div>
+                        <span class="time" id="minutes">00</span>
+                        <span class="label">Minut</span>
+                    </div>
+                    <div>
+                        <span class="time" id="seconds">00</span>
+                        <span class="label">Sekund</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="love-message" id="love-message">
+        Ładowanie wiadomości dla Renatki...
+    </div>
+    
+    <div class="floating-hearts" id="floating-hearts"></div>
+    
+    <script>
+        // Data spotkania z Renatką - ustaw własną datę i godzinę!
+        // Format: Rok, Miesiąc (0-11), Dzień, Godzina, Minuta, Sekunda
+        const meetingDate = new Date(2025, 2, 21, 11, 0, 0);
+        
+        // Lista wiadomości miłosnych, które będą się zmieniać
+        const loveMessages = [
+            "Każde bicie mojego serca jest dla Ciebie, Renatko. Nie mogę się doczekać naszego spotkania.",
+            "Myśl o Tobie wypełnia mnie radością. Liczę każdą sekundę do naszego spotkania.",
+            "Jesteś jak promień słońca w pochmurny dzień - rozświetlasz moje życie, Renatko.",
+            "Twój uśmiech to najpiękniejszy widok, jaki znam. Nie mogę się doczekać, by zobaczyć go znowu.",
+            "Miłość to za mało, by opisać to, co do Ciebie czuję. Jesteś moim wszystkim.",
+            "Kiedy myślę o Tobie, czas się zatrzymuje, a moje serce przyspiesza.",
+            "Twoje oczy są jak gwiazdy, które prowadzą mnie przez najciemniejsze noce.",
+            "Z Tobą każda chwila jest jak magia, Renatko. Nie mogę się doczekać naszego spotkania.",
+            "Jesteś melodią, która nieustannie gra w moim sercu.",
+            "Gdybym mógł zatrzymać czas, zatrzymałbym go na momentach spędzonych z Tobą."
+        ];
+        
+        // Elementy DOM, które będziemy aktualizować
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const loveMessageEl = document.getElementById('love-message');
+        const floatingHeartsEl = document.getElementById('floating-hearts');
+        
+        // Funkcja aktualizująca odliczanie
+        function updateCountdown() {
+            const currentTime = new Date();
+            const difference = meetingDate - currentTime;
+            
+            // Sprawdzenie czy data spotkania już minęła
+            if (difference < 0) {
+                daysEl.innerHTML = '00';
+                hoursEl.innerHTML = '00';
+                minutesEl.innerHTML = '00';
+                secondsEl.innerHTML = '00';
+                loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
+                return;
+            }
+            
+            // Obliczanie pozostałego czasu
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            
+            // Aktualizacja elementów DOM
+            daysEl.innerHTML = days < 10 ? `0${days}` : days;
+            hoursEl.innerHTML = hours < 10 ? `0${hours}` : hours;
+            minutesEl.innerHTML = minutes < 10 ? `0${minutes}` : minutes;
+            secondsEl.innerHTML = seconds < 10 ? `0${seconds}` : seconds;
+        }
+        
+        // Funkcja zmieniająca wiadomość miłosną
+        function changeMessage() {
+            // Animacja zanikania
+            loveMessageEl.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Losowa wiadomość z tablicy
+                const randomIndex = Math.floor(Math.random() * loveMessages.length);
+                loveMessageEl.innerHTML = loveMessages[randomIndex];
+                
+                // Animacja pojawiania się
+                loveMessageEl.style.opacity = '1';
+            }, 500);
+        }
+        
+        // Funkcja tworząca pływające serduszka w tle
+        function createFloatingHearts() {
+            // Usunięcie starych serduszek
+            floatingHeartsEl.innerHTML = '';
+            
+            // Tworzenie nowych serduszek
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('float-heart');
+                heart.innerHTML = '❤';
+                
+                // Losowe pozycjonowanie serduszek
+                const leftPos = Math.random() * 100;
+                const size = Math.random() * 1 + 0.5;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 5;
+                
+                heart.style.left = `${leftPos}%`;
+                heart.style.fontSize = `${size}rem`;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+                
+                floatingHeartsEl.appendChild(heart);
+            }
+        }
+        
+        // Inicjalizacja strony
+        function init() {
+            // Natychmiastowa aktualizacja odliczania
+            updateCountdown();
+            
+            // Ustawienie interwałów dla funkcji
+            setInterval(updateCountdown, 1000);  // Aktualizacja co sekundę
+            setInterval(changeMessage, 10000);   // Zmiana wiadomości co 10 sekund
+            
+            // Pokaż pierwszą wiadomość
+            changeMessage();
+            
+            // Stwórz pływające serduszka
+            createFloatingHearts();
+            setInterval(createFloatingHearts, 20000);  // Regeneracja serduszek co 20 sekund
+        }
+        
+        // Wywołanie funkcji inicjalizującej po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
