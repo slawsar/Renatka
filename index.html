@@ -238,7 +238,7 @@
     <script>
         // Data spotkania z Renatką - ustaw własną datę i godzinę!
         // Format: Rok, Miesiąc (0-11), Dzień, Godzina, Minuta, Sekunda
-        const meetingDate = new Date(2025, 2, 21, 11, 20, 0);
+        const meetingDate = new Date(2025, 5, 15, 18, 0, 0);
         
         // Lista wiadomości miłosnych, które będą się zmieniać
         const loveMessages = [
@@ -251,7 +251,17 @@
             "Twoje oczy są jak gwiazdy, które prowadzą mnie przez najciemniejsze noce.",
             "Z Tobą każda chwila jest jak magia, Renatko. Nie mogę się doczekać naszego spotkania.",
             "Jesteś melodią, która nieustannie gra w moim sercu.",
-            "Gdybym mógł zatrzymać czas, zatrzymałbym go na momentach spędzonych z Tobą.","Odkąd Cię poznałem, każdy dzień nabiera wyjątkowego blasku, Renatko. Nie mogę się doczekać, by znów poczuć Twą obecność.", "Twoja miłość jest dla mnie jak najpiękniejsza melodia, która wypełnia moje serce radością. Każda myśl o Tobie rozświetla mój świat, Renatko.", "Z Tobą każdy moment staje się niezwykłą podróżą w krainę marzeń. Twoje spojrzenie to mój azyl, Renatko.", "Twoje słowa to ciepły szept, który koi moje zmysły, Renatko. Każda sekunda z Tobą jest bezcenna.", "Kiedy jesteś blisko, czas przestaje mieć znaczenie, a serce bije mocniej. Jesteś moim największym skarbem, Renatko.", "Twoja obecność sprawia, że wszystko staje się możliwe. W każdej chwili pragnę zanurzyć się w Twojej miłości, Renatko.", "Gdy patrzę na Ciebie, dostrzegam całą paletę uczuć, która maluje moje życie najpiękniejszymi barwami. Kocham Cię, Renatko.", "Twoje uśmiechy to jak promienie słońca, rozpraszające najciemniejsze chmury. Nie mogę się doczekać kolejnych wspólnych chwil, Renatko.", "Każde słowo, które wypowiadasz, brzmi jak magiczny zaklęcie, które ożywia moje serce. Jesteś moją inspiracją, Renatko.", "Twój dotyk sprawia, że świat przestaje istnieć, a ja zatracam się w Twojej miłości. Każda chwila z Tobą jest jak sen, Renatko."
+            "Gdybym mógł zatrzymać czas, zatrzymałbym go na momentach spędzonych z Tobą.",
+			"Odkąd Cię poznałem, każdy dzień nabiera wyjątkowego blasku, Renatko. Nie mogę się doczekać, by znów poczuć Twą obecność.",
+			"Twoja miłość jest dla mnie jak najpiękniejsza melodia, która wypełnia moje serce radością. Każda myśl o Tobie rozświetla mój świat, Renatko.",
+			"Z Tobą każdy moment staje się niezwykłą podróżą w krainę marzeń. Twoje spojrzenie to mój azyl, Renatko.",
+			"Twoje słowa to ciepły szept, który koi moje zmysły, Renatko. Każda sekunda z Tobą jest bezcenna.",
+			"Kiedy jesteś blisko, czas przestaje mieć znaczenie, a serce bije mocniej. Jesteś moim największym skarbem, Renatko.",
+			"Twoja obecność sprawia, że wszystko staje się możliwe. W każdej chwili pragnę zanurzyć się w Twojej miłości, Renatko.",
+			"Gdy patrzę na Ciebie, dostrzegam całą paletę uczuć, która maluje moje życie najpiękniejszymi barwami. Kocham Cię, Renatko.",
+			"Twoje uśmiechy to jak promienie słońca, rozpraszające najciemniejsze chmury. Nie mogę się doczekać kolejnych wspólnych chwil, Renatko.",
+			"Każde słowo, które wypowiadasz, brzmi jak magiczny zaklęcie, które ożywia moje serce. Jesteś moją inspiracją, Renatko.",
+			"Twój dotyk sprawia, że świat przestaje istnieć, a ja zatracam się w Twojej miłości. Każda chwila z Tobą jest jak sen, Renatko."
 
         ];
         
@@ -263,6 +273,10 @@
         const loveMessageEl = document.getElementById('love-message');
         const floatingHeartsEl = document.getElementById('floating-hearts');
         
+        // Przechowywanie identyfikatorów interwałów do późniejszego zatrzymania
+        let countdownInterval;
+        let messageInterval;
+        
         // Funkcja aktualizująca odliczanie
         function updateCountdown() {
             const currentTime = new Date();
@@ -270,12 +284,21 @@
             
             // Sprawdzenie czy data spotkania już minęła
             if (difference < 0) {
+                // Ustawienie zera na liczniku
                 daysEl.innerHTML = '00';
                 hoursEl.innerHTML = '00';
                 minutesEl.innerHTML = '00';
                 secondsEl.innerHTML = '00';
-              //  loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";                
+                
+                // Ustawienie wiadomości końcowej
+             // loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
                 loveMessageEl.innerHTML = "Renatko, słoneczko moje, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój dziubasek czeka i liczy chwile do naszego spotkania. ❤️";
+				
+                
+                // Zatrzymanie obu interwałów
+                clearInterval(countdownInterval);
+                clearInterval(messageInterval);
+                
                 return;
             }
             
@@ -338,14 +361,29 @@
             // Natychmiastowa aktualizacja odliczania
             updateCountdown();
             
-            // Ustawienie interwałów dla funkcji
-            setInterval(updateCountdown, 1000);  // Aktualizacja co sekundę
-            setInterval(changeMessage, 10000);   // Zmiana wiadomości co 10 sekund
+            // Sprawdzamy, czy data spotkania już minęła
+            const currentTime = new Date();
+            const difference = meetingDate - currentTime;
             
-            // Pokaż pierwszą wiadomość
-            changeMessage();
+            if (difference < 0) {
+                // Jeśli data już minęła, ustawiamy wiadomość końcową i nie uruchamiamy interwałów
+                daysEl.innerHTML = '00';
+                hoursEl.innerHTML = '00';
+                minutesEl.innerHTML = '00';
+                secondsEl.innerHTML = '00';
+             //   loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
+                loveMessageEl.innerHTML = "Renatko, słoneczko moje, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój dziubasek czeka i liczy chwile do naszego spotkania. ❤️";
+                
+            } else {
+                // Ustawienie interwałów dla funkcji tylko jeśli data nie minęła
+                countdownInterval = setInterval(updateCountdown, 1000);  // Aktualizacja co sekundę
+                messageInterval = setInterval(changeMessage, 10000);   // Zmiana wiadomości co 10 sekund
+                
+                // Pokaż pierwszą wiadomość
+                changeMessage();
+            }
             
-            // Stwórz pływające serduszka
+            // Stwórz pływające serduszka (te zostawiamy niezależnie od stanu odliczania)
             createFloatingHearts();
             setInterval(createFloatingHearts, 20000);  // Regeneracja serduszek co 20 sekund
         }
