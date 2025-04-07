@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Odliczanie do spotkania z Renatką - strona ze specjalną animacją i wiadomościami">
     <title>Odliczanie do spotkania z Renatką</title>
     <style>
         /* Resetowanie stylów i ustawienia podstawowe */
@@ -24,20 +25,25 @@
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
             padding: 20px;
+            transition: background-position 0.3s ease;
         }
         
-        /* Stylizacja nagłówka */
+        /* Stylizacja nagłówka z poprawionym kontrastem */
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1.5rem;
             text-align: center;
-            color: #d41c54;
+            color: #b01142; /* Ciemniejszy odcień różowego dla lepszego kontrastu */
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* Jasny cień dla lepszego kontrastu */
         }
         
-        /* Kontener serca z efektem pulsowania */
+        /* Ulepszony kontener serca z efektem 3D */
         .heart-container {
             margin: 2rem 0;
+            perspective: 1000px;
+            transition: all 0.5s ease;
             animation: pulse 1.5s ease-in-out infinite;
+            will-change: transform; /* Wskazówka dla przeglądarki, że transform będzie się zmieniać */
         }
         
         @keyframes pulse {
@@ -46,7 +52,16 @@
             100% { transform: scale(1); }
         }
         
-        /* Tworzenie kształtu serca za pomocą CSS */
+        /* Animacja bicia serca */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1) rotate(45deg); }
+            5% { transform: scale(1.1) rotate(45deg); }
+            10% { transform: scale(1) rotate(45deg); }
+            15% { transform: scale(1.15) rotate(45deg); }
+            25% { transform: scale(1) rotate(45deg); }
+        }
+        
+        /* Tworzenie kształtu serca za pomocą CSS z efektem 3D */
         .heart {
             background-color: rgba(220, 20, 60, 0.8);
             display: inline-block;
@@ -54,7 +69,12 @@
             width: 300px;
             height: 300px;
             transform: rotate(45deg);
-            box-shadow: 0 0 40px rgba(220, 20, 60, 0.5);
+            box-shadow: 
+                0 0 40px rgba(220, 20, 60, 0.5),
+                0 10px 20px rgba(0, 0, 0, 0.3);
+            animation: heartbeat 2s infinite;
+            transition: transform 0.5s ease;
+            will-change: transform; /* Optymalizacja dla animacji */
         }
         
         .heart:before,
@@ -65,19 +85,45 @@
             height: 300px;
             border-radius: 50%;
             position: absolute;
+            transition: all 0.5s ease;
+            will-change: transform, background-color; /* Optymalizacja */
         }
         
         .heart:before {
             top: -150px;
             left: 0;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .heart:after {
             top: 0;
             left: -150px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
         }
         
-        /* Kontener dla zegara wewnątrz serca */
+        /* Efekt blasku wokół serca */
+        .heart::after,
+        .heart::before {
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
+        }
+        
+        /* Animacja obracania serca przy najechaniu */
+        .heart-container:hover .heart {
+            animation-play-state: paused;
+            transform: rotate(45deg) scale(1.05);
+        }
+        
+        .heart-container:hover {
+            transform: translateZ(50px);
+        }
+        
+        /* Dodatkowy efekt blasku przy najechaniu */
+        .heart-container:hover .heart::after,
+        .heart-container:hover .heart::before {
+            background-color: rgba(230, 30, 70, 0.9);
+        }
+        
+        /* Kontener dla zegara wewnątrz serca - dodane atrybuty ARIA */
         .countdown-container {
             position: absolute;
             top: 50%;
@@ -86,6 +132,17 @@
             z-index: 10;
             width: 260px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 15px;
+            backdrop-filter: blur(3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .countdown-container:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         
         /* Stylizacja zegara odliczającego */
@@ -98,6 +155,7 @@
         
         .countdown div {
             margin: 0 10px;
+            position: relative;
         }
         
         .countdown span {
@@ -105,17 +163,26 @@
         }
         
         .countdown .time {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .countdown div:hover .time {
+            transform: scale(1.1);
+            color: #fff;
         }
         
         .countdown .label {
             font-size: 0.8rem;
             text-transform: uppercase;
             margin-top: 5px;
+            font-weight: 500;
+            opacity: 0.9;
         }
         
-        /* Stylizacja dynamicznej wiadomości miłosnej */
+        /* Stylizacja dynamicznej wiadomości miłosnej z poprawionym kontrastem */
         .love-message {
             font-size: 1.3rem;
             font-style: italic;
@@ -123,10 +190,9 @@
             margin: 2rem 0;
             min-height: 4rem;
             max-width: 800px;
-            padding: 0 1rem;
             line-height: 1.5;
-            color: #d41c54;
-            background-color: rgba(255, 255, 255, 0.7);
+            color: #a01040; /* Ciemniejszy kolor dla lepszej czytelności */
+            background-color: rgba(255, 255, 255, 0.8); /* Mniej przezroczyste tło */
             padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -142,6 +208,7 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
+            overflow: hidden; /* Zapobiega paskom przewijania */
         }
         
         .float-heart {
@@ -149,6 +216,8 @@
             color: rgba(220, 20, 60, 0.3);
             font-size: 1.5rem;
             animation: float-up linear infinite;
+            will-change: transform, opacity; /* Optymalizacja animacji */
+            transform: translateZ(0); /* Aktywuje akcelerację sprzętową */
         }
         
         @keyframes float-up {
@@ -162,7 +231,82 @@
             }
         }
         
-        /* Responsywność dla mniejszych ekranów */
+        /* Animowane chmury serc */
+        .heart-clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .cloud {
+            position: absolute;
+            opacity: 0.6;
+            filter: blur(3px);
+            will-change: transform; /* Optymalizacja animacji */
+        }
+        
+        .cloud::before {
+            content: "❤️❤️❤️";
+            font-size: 2rem;
+            letter-spacing: 10px;
+            display: block;
+        }
+        
+        .cloud-1 {
+            top: 15%;
+            animation: float-cloud 80s linear infinite;
+        }
+        
+        .cloud-2 {
+            top: 50%;
+            animation: float-cloud 120s 20s linear infinite;
+        }
+        
+        .cloud-3 {
+            top: 80%;
+            animation: float-cloud 100s 40s linear infinite;
+        }
+        
+        @keyframes float-cloud {
+            0% {
+                left: -300px;
+                transform: scale(0.8) translateY(0);
+            }
+            50% {
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                left: 100%;
+                transform: scale(0.8) translateY(0);
+            }
+        }
+        
+        /* Dodaj więcej różnorodności do chmur */
+        .cloud-1::before {
+            content: "💝🌞💝";
+        }
+        
+        .cloud-2::before {
+            content: "💝🌞💝";
+        }
+        
+        .cloud-3::before {
+            content: "💝🌞💝";
+        }
+        
+        /* Styl dla wstrzymania animacji gdy strona jest niewidoczna */
+        .paused .heart, 
+        .paused .float-heart, 
+        .paused .cloud {
+            animation-play-state: paused !important;
+        }
+        
+        /* Responsywność dla mniejszych ekranów z dodatkowym breakpointem */
         @media (max-width: 700px) {
             h1 {
                 font-size: 1.8rem;
@@ -199,29 +343,79 @@
                 font-size: 1.1rem;
             }
         }
+        
+        /* Dodatkowy breakpoint dla bardzo małych ekranów */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .heart {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .heart:before,
+            .heart:after {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .heart:before {
+                top: -75px;
+            }
+            
+            .heart:after {
+                left: -75px;
+            }
+            
+            .countdown-container {
+                width: 140px;
+            }
+            
+            .countdown .time {
+                font-size: 1.2rem;
+            }
+            
+            /* Ogranicz ilość animacji na mobilnych urządzeniach dla lepszej wydajności */
+            .floating-hearts .float-heart {
+                display: none;
+            }
+            
+            .floating-hearts .float-heart:nth-child(-n+5) {
+                display: block; /* Pokazuj tylko 5 pierwszych serduszek */
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Animowane chmury serc -->
+    <div class="heart-clouds">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+    </div>
+    
     <h1>Odliczanie do spotkania z Renatką</h1>
     
     <div class="heart-container">
         <div class="heart">
-            <div class="countdown-container">
+            <div class="countdown-container" role="timer" aria-label="Odliczanie do spotkania z Renatką">
                 <div class="countdown">
                     <div>
-                        <span class="time" id="days">00</span>
+                        <span class="time" id="days" aria-label="dni">00</span>
                         <span class="label">Dni</span>
                     </div>
                     <div>
-                        <span class="time" id="hours">00</span>
+                        <span class="time" id="hours" aria-label="godziny">00</span>
                         <span class="label">Godzin</span>
                     </div>
                     <div>
-                        <span class="time" id="minutes">00</span>
+                        <span class="time" id="minutes" aria-label="minuty">00</span>
                         <span class="label">Minut</span>
                     </div>
                     <div>
-                        <span class="time" id="seconds">00</span>
+                        <span class="time" id="seconds" aria-label="sekundy">00</span>
                         <span class="label">Sekund</span>
                     </div>
                 </div>
@@ -229,167 +423,453 @@
         </div>
     </div>
     
-    <div class="love-message" id="love-message">
+    <div class="love-message" id="love-message" aria-live="polite">
         Ładowanie wiadomości dla Renatki...
     </div>
     
     <div class="floating-hearts" id="floating-hearts"></div>
     
     <script>
-        // Data spotkania z Renatką - ustaw własną datę i godzinę!
-        // Format: Rok, Miesiąc (0-11), Dzień, Godzina, Minuta, Sekunda
-        const meetingDate = new Date(2025, 3, 07, 11, 00, 0);
-        
-        // Lista wiadomości miłosnych, które będą się zmieniać
-        const loveMessages = [
-            "Każde bicie mojego serca jest dla Ciebie, Renatko. Nie mogę się doczekać naszego spotkania.",
-            "Myśl o Tobie wypełnia mnie radością. Liczę każdą sekundę do naszego spotkania.",
-            "Jesteś jak promień słońca w pochmurny dzień - rozświetlasz moje życie, Renatko.",
-            "Twój uśmiech to najpiękniejszy widok, jaki znam. Nie mogę się doczekać, by zobaczyć go znowu.",
-            "Miłość to za mało, by opisać to, co do Ciebie czuję. Jesteś moim wszystkim.",
-            "Kiedy myślę o Tobie, czas się zatrzymuje, a moje serce przyspiesza.",
-            "Twoje oczy są jak gwiazdy, które prowadzą mnie przez najciemniejsze noce.",
-            "Z Tobą każda chwila jest jak magia, Renatko. Nie mogę się doczekać naszego spotkania.",
-            "Jesteś melodią, która nieustannie gra w moim sercu.",
-            "Gdybym mógł zatrzymać czas, zatrzymałbym go na momentach spędzonych z Tobą.",
-			"Odkąd Cię poznałem, każdy dzień nabiera wyjątkowego blasku, Renatko. Nie mogę się doczekać, by znów poczuć Twą obecność.",
-			"Twoja miłość jest dla mnie jak najpiękniejsza melodia, która wypełnia moje serce radością. Każda myśl o Tobie rozświetla mój świat, Renatko.",
-			"Z Tobą każdy moment staje się niezwykłą podróżą w krainę marzeń. Twoje spojrzenie to mój azyl, Renatko.",
-			"Twoje słowa to ciepły szept, który koi moje zmysły, Renatko. Każda sekunda z Tobą jest bezcenna.",
-			"Kiedy jesteś blisko, czas przestaje mieć znaczenie, a serce bije mocniej. Jesteś moim największym skarbem, Renatko.",
-			"Twoja obecność sprawia, że wszystko staje się możliwe. W każdej chwili pragnę zanurzyć się w Twojej miłości, Renatko.",
-			"Gdy patrzę na Ciebie, dostrzegam całą paletę uczuć, która maluje moje życie najpiękniejszymi barwami. Kocham Cię, Renatko.",
-			"Twoje uśmiechy to jak promienie słońca, rozpraszające najciemniejsze chmury. Nie mogę się doczekać kolejnych wspólnych chwil, Renatko.",
-			"Każde słowo, które wypowiadasz, brzmi jak magiczny zaklęcie, które ożywia moje serce. Jesteś moją inspiracją, Renatko.",
-			"Twój dotyk sprawia, że świat przestaje istnieć, a ja zatracam się w Twojej miłości. Każda chwila z Tobą jest jak sen, Renatko."
-
-        ];
-        
-        // Elementy DOM, które będziemy aktualizować
-        const daysEl = document.getElementById('days');
-        const hoursEl = document.getElementById('hours');
-        const minutesEl = document.getElementById('minutes');
-        const secondsEl = document.getElementById('seconds');
-        const loveMessageEl = document.getElementById('love-message');
-        const floatingHeartsEl = document.getElementById('floating-hearts');
-        
-        // Przechowywanie identyfikatorów interwałów do późniejszego zatrzymania
-        let countdownInterval;
-        let messageInterval;
-        
-        // Funkcja aktualizująca odliczanie
-        function updateCountdown() {
-            const currentTime = new Date();
-            const difference = meetingDate - currentTime;
+        // Zorganizowane jako moduł dla lepszej struktury kodu
+        const LoveCountdown = {
+            // Konfiguracja
+            config: {
+                // Data spotkania z Renatką - ustaw własną datę i godzinę!
+                // Format: Rok, Miesiąc (0-11), Dzień, Godzina, Minuta, Sekunda
+                meetingDate: new Date(2025, 3, 07, 11, 00, 0),
+                messageInterval: 10000,
+                floatingHeartsInterval: 20000,
+                heartsCount: 20
+            },
             
-            // Sprawdzenie czy data spotkania już minęła
-            if (difference < 0) {
-                // Ustawienie zera na liczniku
-                daysEl.innerHTML = '00';
-                hoursEl.innerHTML = '00';
-                minutesEl.innerHTML = '00';
-                secondsEl.innerHTML = '00';
+            // Elementy DOM, które będziemy aktualizować
+            elements: {
+                days: null,
+                hours: null,
+                minutes: null,
+                seconds: null,
+                loveMessage: null,
+                floatingHearts: null,
+                heartContainer: null
+            },
+            
+            // Przechowywanie identyfikatorów interwałów do późniejszego zatrzymania
+            timers: {
+                countdown: null,
+                message: null,
+                hearts: null,
+                confettiCheck: null,
+                confettiAnim: null
+            },
+            
+            // Inicjalizacja elementów DOM
+            initElements() {
+                this.elements.days = document.getElementById('days');
+                this.elements.hours = document.getElementById('hours');
+                this.elements.minutes = document.getElementById('minutes');
+                this.elements.seconds = document.getElementById('seconds');
+                this.elements.loveMessage = document.getElementById('love-message');
+                this.elements.floatingHearts = document.getElementById('floating-hearts');
+                this.elements.heartContainer = document.querySelector('.heart-container');
+            },
+            
+            // Lista wiadomości miłosnych, które będą się zmieniać
+            loveMessages: [
+                "Każde bicie mojego serca jest dla Ciebie, Renatko. Nie mogę się doczekać naszego spotkania.",
+                "Myśl o Tobie wypełnia mnie radością. Liczę każdą sekundę do naszego spotkania.",
+                "Jesteś jak promień słońca w pochmurny dzień - rozświetlasz moje życie, Renatko.",
+                "Twój uśmiech to najpiękniejszy widok, jaki znam. Nie mogę się doczekać, by zobaczyć go znowu.",
+                "Miłość to za mało, by opisać to, co do Ciebie czuję. Jesteś moim wszystkim.",
+                "Kiedy myślę o Tobie, czas się zatrzymuje, a moje serce przyspiesza.",
+                "Twoje oczy są jak gwiazdy, które prowadzą mnie przez najciemniejsze noce.",
+                "Z Tobą każda chwila jest jak magia, Renatko. Nie mogę się doczekać naszego spotkania.",
+                "Jesteś melodią, która nieustannie gra w moim sercu.",
+                "Gdybym mógł zatrzymać czas, zatrzymałbym go na momentach spędzonych z Tobą.",
+                "Odkąd Cię poznałem, każdy dzień nabiera wyjątkowego blasku, Renatko. Nie mogę się doczekać, by znów poczuć Twą obecność.",
+                "Twoja miłość jest dla mnie jak najpiękniejsza melodia, która wypełnia moje serce radością. Każda myśl o Tobie rozświetla mój świat, Renatko.",
+                "Z Tobą każdy moment staje się niezwykłą podróżą w krainę marzeń. Twoje spojrzenie to mój azyl, Renatko.",
+                "Twoje słowa to ciepły szept, który koi moje zmysły, Renatko. Każda sekunda z Tobą jest bezcenna.",
+                "Kiedy jesteś blisko, czas przestaje mieć znaczenie, a serce bije mocniej. Jesteś moim największym skarbem, Renatko.",
+                "Twoja obecność sprawia, że wszystko staje się możliwe. W każdej chwili pragnę zanurzyć się w Twojej miłości, Renatko.",
+                "Gdy patrzę na Ciebie, dostrzegam całą paletę uczuć, która maluje moje życie najpiękniejszymi barwami. Kocham Cię, Renatko.",
+                "Twoje uśmiechy to jak promienie słońca, rozpraszające najciemniejsze chmury. Nie mogę się doczekać kolejnych wspólnych chwil, Renatko.",
+                "Każde słowo, które wypowiadasz, brzmi jak magiczny zaklęcie, które ożywia moje serce. Jesteś moją inspiracją, Renatko.",
+                "Twój dotyk sprawia, że świat przestaje istnieć, a ja zatracam się w Twojej miłości. Każda chwila z Tobą jest jak sen, Renatko.",
+                "Gdy jesteś przy mnie, wszystko staje się możliwe. Twoja miłość to mój najcenniejszy skarb, Renatko.",
+                "Każdy Twój uśmiech napełnia mnie nadzieją i radością. Myśl o Tobie rozgrzewa moje serce, Renatko.",
+                "Twoje słowa są jak delikatny wiatr, który niesie obietnicę pięknej przyszłości. Tęsknię za Tobą, Renatko.",
+                "Kiedy myślę o Tobie, czuję, że świat nabiera nowych barw. Jesteś dla mnie życiodajną iskierką, Renatko.",
+                "Twoja obecność nadaje każdej chwili wyjątkowe znaczenie. Z utęsknieniem czekam na nasze spotkanie, Renatko.",
+                "Twój głos brzmi niczym melodia, która koi moje troski. Nie mogę się doczekać, by usłyszeć go ponownie, Renatko.",
+                "W Twoich ramionach odnajduję bezpieczeństwo, o jakim zawsze marzyłem. Tęsknię za Twoją bliskością, Renatko.",
+                "Każdy moment spędzony z Tobą to jak najpiękniejszy sen, z którego nie chcę się budzić. Kocham Cię, Renatko.",
+                "Twoja miłość dodaje mi sił i sprawia, że wierzę w cuda. Czekam na kolejny cudowny dzień z Tobą, Renatko.",
+                "Gdy patrzę na Ciebie, czuję, że cały świat staje się piękniejszy. Twoja obecność jest dla mnie darem, Renatko.",
+                "Każde Twoje spojrzenie wypełnia moje serce miłością. Pragnę być zawsze blisko Ciebie, Renatko.",
+                "Twoje ciepłe słowa rozgrzewają moje serce niczym promienie słońca w chłodny dzień. Tęsknię za Tobą, Renatko.",
+                "Jesteś dla mnie źródłem niekończącej się inspiracji. Każda myśl o Tobie przynosi mi uśmiech, Renatko.",
+                "Twoja miłość to bajka, która codziennie nabiera nowych barw. Z utęsknieniem czekam na kolejny rozdział, Renatko.",
+                "Gdy jesteś przy mnie, świat staje się miejscem pełnym magii. Dziękuję, że jesteś, Renatko.",
+                "Twoja obecność rozświetla każdy zakamarek mojego serca. Nie mogę się doczekać, by znów Cię zobaczyć, Renatko.",
+                "Każde nasze spotkanie to cudowny prezent losu. Twoja miłość jest moją największą siłą, Renatko.",
+                "Kiedy słyszę Twój głos, moje serce wypełnia się radością. Pragnę więcej takich chwil, Renatko.",
+                "Twoja miłość daje mi odwagę, by marzyć o nieskończonej przyszłości. Czekam z niecierpliwością na naszą kolejną przygodę, Renatko.",
+                "Każda minuta spędzona z Tobą jest bezcenna, Renatko. Twoja miłość rozświetla każdy mój dzień.",
+                "W Twoim uśmiechu odnajduję spokój, a Twoje spojrzenie budzi we mnie najgłębsze uczucia, Renatko.",
+                "Twoje ciepło sprawia, że nawet najchłodniejsze dni stają się pełne życia. Tęsknię za Tobą, Renatko.",
+                "Gdy jesteś blisko, świat nabiera nowych barw, a moje serce bije szybciej, Renatko.",
+                "Każde Twoje słowo brzmi jak najpiękniejsza melodia, która koi moje zmysły, Renatko.",
+                "W Twojej obecności odnajduję bezpieczeństwo i szczęście. Nie mogę doczekać się kolejnych chwil razem, Renatko.",
+                "Twoje oczy lśnią niczym gwiazdy na nocnym niebie, a ja chcę trwać przy Tobie na zawsze, Renatko.",
+                "Każda myśl o Tobie przynosi mi radość, a serce rozgrzewa się na samą myśl o spotkaniu, Renatko.",
+                "W Twojej miłości odnajduję sens istnienia, a każda chwila bez Ciebie staje się pustką, Renatko.",
+                "Twoje ciepłe słowa otulają mnie jak miękki koc, dając mi siłę na każdy dzień. Kocham Cię, Renatko.",
+                "Z Tobą każdy dzień staje się najpiękniejszą opowieścią, której nigdy nie chcę przestać słuchać, Renatko.",
+                "Twoja obecność przemienia zwykłe chwile w magiczne momenty, które zapisuję głęboko w sercu, Renatko.",
+                "Gdy tylko pomyślę o Tobie, czuję, jakby cały świat stawał się lepszy. Tęsknię za Twoim blaskiem, Renatko.",
+                "Twoja miłość jest dla mnie jak ciepły promień słońca po długiej, zimnej nocy. Nie mogę się doczekać, Renatko.",
+                "W Twoich oczach widzę przyszłość pełną nadziei i szczęścia, a każda myśl o Tobie napełnia mnie energią, Renatko.",
+                "Twoje czułe gesty i delikatne słowa sprawiają, że czuję się najważniejszy na świecie. Kocham Cię, Renatko.",
+                "Każde spotkanie z Tobą jest jak nowy początek, pełen obietnicy nieskończonych możliwości, Renatko.",
+                "W Twojej obecności czuję, że każdy problem znika, a życie nabiera nowego, pięknego wymiaru, Renatko.",
+                "Twoje serce bije w rytmie moich najskrytszych marzeń, a ja pragnę dzielić z Tobą każdy moment, Renatko.",
+                "Każda chwila bez Ciebie jest jak zgaszony blask, lecz myśl o Tobie przywraca mi światło i nadzieję, Renatko."
+            ],
+            
+            // Funkcja aktualizująca odliczanie
+            updateCountdown() {
+                const currentTime = new Date();
+                const difference = this.config.meetingDate - currentTime;
                 
-                // Ustawienie wiadomości końcowej
-              loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
-               // loveMessageEl.innerHTML = "Renatko💝🌞💝, słoneczko moje, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój dziubasek czeka i chcę, aby ten zegar odliczał chwile do naszego spotkania. ❤️";
-				
+                // Sprawdzenie czy data spotkania już minęła
+                if (difference < 0) {
+                    // Ustawienie zera na liczniku
+                    this.elements.days.innerHTML = '00';
+                    this.elements.hours.innerHTML = '00';
+                    this.elements.minutes.innerHTML = '00';
+                    this.elements.seconds.innerHTML = '00';
+                    
+                    // Sprawdzenie czy minęły 4 godziny od spotkania
+                    const hoursSinceMeeting = Math.abs(difference) / (1000 * 60 * 60);
+                    
+                    if (hoursSinceMeeting >= 4) {
+                        // Ustawienie specjalnej wiadomości tęsknoty po 4 godzinach
+                        this.elements.loveMessage.innerHTML = "Renatko💝🌞💝, słoneczko moje💋, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój Dziubasek czeka i chcę, aby ten zegar odliczał chwile do naszego spotkania. ❤️";
+                    } else {
+                        // Ustawienie wiadomości podczas spotkania
+                        this.elements.loveMessage.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
+                    }
+                    
+                    // Zatrzymanie obu interwałów
+                    clearInterval(this.timers.countdown);
+                    clearInterval(this.timers.message);
+                    
+                    return;
+                }
                 
-                // Zatrzymanie obu interwałów
-                clearInterval(countdownInterval);
-                clearInterval(messageInterval);
+                // Obliczanie pozostałego czasu
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
                 
-                return;
+                // Aktualizacja elementów DOM
+                this.elements.days.innerHTML = days < 10 ? `0${days}` : days;
+                this.elements.hours.innerHTML = hours < 10 ? `0${hours}` : hours;
+                this.elements.minutes.innerHTML = minutes < 10 ? `0${minutes}` : minutes;
+                this.elements.seconds.innerHTML = seconds < 10 ? `0${seconds}` : seconds;
+            },
+            
+            // Funkcja zmieniająca wiadomość miłosną
+            changeMessage() {
+                // Animacja zanikania
+                this.elements.loveMessage.style.opacity = '0';
+                
+                const self = this; // Zachowanie kontekstu
+                setTimeout(() => {
+                    // Losowa wiadomość z tablicy
+                    const randomIndex = Math.floor(Math.random() * self.loveMessages.length);
+                    self.elements.loveMessage.innerHTML = self.loveMessages[randomIndex];
+                    
+                    // Animacja pojawiania się
+                    self.elements.loveMessage.style.opacity = '1';
+                }, 500);
+            },
+            
+            // Funkcja tworząca pływające serduszka w tle - zoptymalizowana
+            createFloatingHearts() {
+                // Pobierz istniejące serduszka
+                const existingHearts = this.elements.floatingHearts.querySelectorAll('.float-heart');
+                
+                // Jeśli istnieje już pula serduszek, recyklinguj je zamiast tworzyć nowe
+                if (existingHearts.length >= this.config.heartsCount) {
+                    existingHearts.forEach(heart => {
+                        // Losowe pozycjonowanie serduszek
+                        const leftPos = Math.random() * 100;
+                        const size = Math.random() * 1 + 0.5;
+                        const duration = Math.random() * 15 + 10;
+                        const delay = Math.random() * 5;
+                        
+                        heart.style.left = `${leftPos}%`;
+                        heart.style.fontSize = `${size}rem`;
+                        
+                        // Technika resetowania animacji
+                        heart.style.animationName = 'none';
+                        heart.offsetHeight; // Wymuszenie pobrania przez przeglądarkę
+                        heart.style.animationName = 'float-up';
+                        heart.style.animationDuration = `${duration}s`;
+                        heart.style.animationDelay = `${delay}s`;
+                    });
+                } else {
+                    // Tylko przy pierwszym uruchomieniu - tworzenie puli serduszek
+                    for (let i = 0; i < this.config.heartsCount; i++) {
+                        const heart = document.createElement('div');
+                        heart.classList.add('float-heart');
+                        heart.innerHTML = '❤';
+                        
+                        // Losowe pozycjonowanie serduszek
+                        const leftPos = Math.random() * 100;
+                        const size = Math.random() * 1 + 0.5;
+                        const duration = Math.random() * 15 + 10;
+                        const delay = Math.random() * 5;
+                        
+                        heart.style.left = `${leftPos}%`;
+                        heart.style.fontSize = `${size}rem`;
+                        heart.style.animationDuration = `${duration}s`;
+                        heart.style.animationDelay = `${delay}s`;
+                        
+                        this.elements.floatingHearts.appendChild(heart);
+                    }
+                }
+            },
+            
+            // Funkcja tworząca efekt paralaksy
+            initParallax() {
+                // Zmniejszona częstotliwość odczytu/zapisu DOM dzięki throttling
+                let ticking = false;
+                
+                document.addEventListener('mousemove', e => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            const moveX = (e.clientX / window.innerWidth) * 20 - 10;
+                            const moveY = (e.clientY / window.innerHeight) * 20 - 10;
+                            
+                            document.body.style.backgroundPosition = `${moveX}px ${moveY}px`;
+                            
+                            // Poruszanie serca wraz z kursorem myszy
+                            this.elements.heartContainer.style.transform = `translate(${moveX / 10}px, ${moveY / 10}px)`;
+                            
+                            ticking = false;
+                        });
+                        
+                        ticking = true;
+                    }
+                });
+            },
+            
+            // Funkcja inicjalizująca efekt konfetti
+            initConfetti() {
+                const confettiCanvas = document.createElement('canvas');
+                confettiCanvas.id = 'confetti-canvas';
+                confettiCanvas.style.position = 'fixed';
+                confettiCanvas.style.top = '0';
+                confettiCanvas.style.left = '0';
+                confettiCanvas.style.width = '100%';
+                confettiCanvas.style.height = '100%';
+                confettiCanvas.style.pointerEvents = 'none';
+                confettiCanvas.style.zIndex = '999';
+                confettiCanvas.style.display = 'none';
+                document.body.appendChild(confettiCanvas);
+                
+                const confettiCtx = confettiCanvas.getContext('2d');
+                let confettiRunning = false;
+                const particles = [];
+                
+                // Sprawdza, czy data spotkania nadeszła i czy konfetti powinno zostać uruchomione
+                const checkDate = () => {
+                    const currentTime = new Date();
+                    const difference = this.config.meetingDate - currentTime;
+                    const hoursSinceMeeting = Math.abs(difference) / (1000 * 60 * 60);
+                    
+                    // Uruchom konfetti tylko w momencie spotkania, nie po 4 godzinach
+                    if (difference <= 0 && hoursSinceMeeting < 4 && !confettiRunning) {
+                        confettiCanvas.style.display = 'block';
+                        runConfetti();
+                        
+                        // Zatrzymaj konfetti po jakimś czasie
+                        setTimeout(() => {
+                            confettiRunning = false;
+                            cancelAnimationFrame(this.timers.confettiAnim);
+                            confettiCanvas.style.display = 'none';
+                        }, 30000); // Konfetti działa przez 30 sekund
+                    }
+                };
+                
+                const runConfetti = () => {
+                    confettiRunning = true;
+                    confettiCanvas.width = window.innerWidth;
+                    confettiCanvas.height = window.innerHeight;
+                    
+                    // Tworzenie cząsteczek konfetti
+                    for (let i = 0; i < 200; i++) {
+                        particles.push({
+                            x: Math.random() * confettiCanvas.width,
+                            y: -20,
+                            radius: Math.random() * 5 + 5,
+                            color: `hsl(${Math.random() * 60 + 320}, 100%, 50%)`,
+                            speed: Math.random() * 3 + 2,
+                            rotation: Math.random() * 360,
+                            rotationSpeed: Math.random() * 10 - 5
+                        });
+                    }
+                    
+                    animateConfetti();
+                };
+                
+                const animateConfetti = () => {
+                    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+                        
+                        confettiCtx.save();
+                        confettiCtx.translate(p.x, p.y);
+                        confettiCtx.rotate(p.rotation * Math.PI / 180);
+                        
+                        confettiCtx.fillStyle = p.color;
+                        confettiCtx.beginPath();
+                        if (Math.random() > 0.5) {
+                            // Prostokąt
+                            confettiCtx.fillRect(-p.radius / 2, -p.radius / 2, p.radius, p.radius / 2);
+                        } else {
+                            // Owal
+                            confettiCtx.ellipse(0, 0, p.radius / 2, p.radius, 0, 0, 2 * Math.PI);
+                            confettiCtx.fill();
+                        }
+                        confettiCtx.restore();
+                        
+                        // Aktualizacja położenia
+                        p.y += p.speed;
+                        p.rotation += p.rotationSpeed;
+                        
+                        // Usunięcie cząsteczek, które wyszły poza ekran
+                        if (p.y > confettiCanvas.height + 20) {
+                            particles.splice(i, 1);
+                            i--;
+                            
+                            // Dodanie nowej cząsteczki, aby efekt trwał dłużej
+                            if (Math.random() > 0.7 && confettiRunning) {
+                                particles.push({
+                                    x: Math.random() * confettiCanvas.width,
+                                    y: -20,
+                                    radius: Math.random() * 5 + 5,
+                                    color: `hsl(${Math.random() * 60 + 320}, 100%, 50%)`,
+                                    speed: Math.random() * 3 + 2,
+                                    rotation: Math.random() * 360,
+                                    rotationSpeed: Math.random() * 10 - 5
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (confettiRunning) {
+                        this.timers.confettiAnim = requestAnimationFrame(animateConfetti);
+                    }
+                };
+                
+                // Sprawdzanie czasu co sekundę
+                this.timers.confettiCheck = setInterval(checkDate, 1000);
+                
+                // Dostosowanie konfetti przy zmianie rozmiaru okna
+                window.addEventListener('resize', () => {
+                    if (confettiRunning) {
+                        confettiCanvas.width = window.innerWidth;
+                        confettiCanvas.height = window.innerHeight;
+                    }
+                });
+            },
+            
+            // Wstrzymywanie animacji gdy karta nie jest aktywna
+            initVisibilityHandler() {
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        // Wstrzymaj ciężkie animacje gdy strona jest niewidoczna
+                        document.body.classList.add('paused');
+                    } else {
+                        document.body.classList.remove('paused');
+                        
+                        // Jeśli odliczanie nadal trwa, natychmiast zaktualizuj je
+                        if (this.timers.countdown) {
+                            this.updateCountdown();
+                        }
+                    }
+                });
+            },
+            
+            // Czyszczenie zasobów przy zamykaniu strony
+            initCleanup() {
+                window.addEventListener('beforeunload', () => {
+                    // Czyszczenie wszystkich interwałów i animacji
+                    clearInterval(this.timers.countdown);
+                    clearInterval(this.timers.message);
+                    clearInterval(this.timers.hearts);
+                    clearInterval(this.timers.confettiCheck);
+                    cancelAnimationFrame(this.timers.confettiAnim);
+                });
+            },
+            
+            // Główna funkcja inicjalizująca
+            init() {
+                // Inicjalizacja elementów DOM
+                this.initElements();
+                
+                // Natychmiastowa aktualizacja odliczania
+                this.updateCountdown();
+                
+                // Sprawdzamy, czy data spotkania już minęła
+                const currentTime = new Date();
+                const difference = this.config.meetingDate - currentTime;
+                
+                if (difference < 0) {
+                    // Jeśli data już minęła, ustawiamy wiadomość końcową i nie uruchamiamy interwałów
+                    this.elements.days.innerHTML = '00';
+                    this.elements.hours.innerHTML = '00';
+                    this.elements.minutes.innerHTML = '00';
+                    this.elements.seconds.innerHTML = '00';
+                    
+                    // Sprawdzenie czy minęły 4 godziny od spotkania
+                    const hoursSinceMeeting = Math.abs(difference) / (1000 * 60 * 60);
+                    
+                    if (hoursSinceMeeting >= 4) {
+                        // Ustawienie specjalnej wiadomości tęsknoty po 4 godzinach
+                        this.elements.loveMessage.innerHTML = "Renatko💝🌞💝, słoneczko moje💋, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój Dziubasek czeka i chcę, aby ten zegar odliczał chwile do naszego spotkania. ❤️";
+                    } else {
+                        // Ustawienie wiadomości podczas spotkania
+                        this.elements.loveMessage.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
+                    }
+                } else {
+                    // Ustawienie interwałów dla funkcji tylko jeśli data nie minęła
+                    this.timers.countdown = setInterval(() => this.updateCountdown(), 1000);  // Aktualizacja co sekundę
+                    this.timers.message = setInterval(() => this.changeMessage(), this.config.messageInterval);   // Zmiana wiadomości co 10 sekund
+                    
+                    // Pokaż pierwszą wiadomość
+                    this.changeMessage();
+                }
+                
+                // Inicjalizacja nowych funkcji
+                this.initParallax();  // Efekt paralaksy
+                this.initConfetti(); // Efekt konfetti
+                this.initVisibilityHandler(); // Obsługa widoczności karty
+                this.initCleanup(); // Czyszczenie zasobów
+                
+                // Stwórz pływające serduszka (te zostawiamy niezależnie od stanu odliczania)
+                this.createFloatingHearts();
+                this.timers.hearts = setInterval(() => this.createFloatingHearts(), this.config.floatingHeartsInterval);  // Regeneracja serduszek co 20 sekund
             }
-            
-            // Obliczanie pozostałego czasu
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-            
-            // Aktualizacja elementów DOM
-            daysEl.innerHTML = days < 10 ? `0${days}` : days;
-            hoursEl.innerHTML = hours < 10 ? `0${hours}` : hours;
-            minutesEl.innerHTML = minutes < 10 ? `0${minutes}` : minutes;
-            secondsEl.innerHTML = seconds < 10 ? `0${seconds}` : seconds;
-        }
-        
-        // Funkcja zmieniająca wiadomość miłosną
-        function changeMessage() {
-            // Animacja zanikania
-            loveMessageEl.style.opacity = '0';
-            
-            setTimeout(() => {
-                // Losowa wiadomość z tablicy
-                const randomIndex = Math.floor(Math.random() * loveMessages.length);
-                loveMessageEl.innerHTML = loveMessages[randomIndex];
-                
-                // Animacja pojawiania się
-                loveMessageEl.style.opacity = '1';
-            }, 500);
-        }
-        
-        // Funkcja tworząca pływające serduszka w tle
-        function createFloatingHearts() {
-            // Usunięcie starych serduszek
-            floatingHeartsEl.innerHTML = '';
-            
-            // Tworzenie nowych serduszek
-            for (let i = 0; i < 20; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('float-heart');
-                heart.innerHTML = '❤';
-                
-                // Losowe pozycjonowanie serduszek
-                const leftPos = Math.random() * 100;
-                const size = Math.random() * 1 + 0.5;
-                const duration = Math.random() * 15 + 10;
-                const delay = Math.random() * 5;
-                
-                heart.style.left = `${leftPos}%`;
-                heart.style.fontSize = `${size}rem`;
-                heart.style.animationDuration = `${duration}s`;
-                heart.style.animationDelay = `${delay}s`;
-                
-                floatingHeartsEl.appendChild(heart);
-            }
-        }
-        
-        // Inicjalizacja strony
-        function init() {
-            // Natychmiastowa aktualizacja odliczania
-            updateCountdown();
-            
-            // Sprawdzamy, czy data spotkania już minęła
-            const currentTime = new Date();
-            const difference = meetingDate - currentTime;
-            
-            if (difference < 0) {
-                // Jeśli data już minęła, ustawiamy wiadomość końcową i nie uruchamiamy interwałów
-                daysEl.innerHTML = '00';
-                hoursEl.innerHTML = '00';
-                minutesEl.innerHTML = '00';
-                secondsEl.innerHTML = '00';
-               loveMessageEl.innerHTML = "Nasze spotkanie właśnie trwa! ❤️ Cieszę się każdą chwilą spędzoną z Tobą, Renatko!";
-              //  loveMessageEl.innerHTML = "Renatko💝🌞💝, słoneczko moje💋, tak bardzo za Tobą tęsknię, że każdy dzień bez Ciebie wydaje się szary i pusty. Myśli krążą wokół Ciebie nieustannie, a serce bije tylko dla Twojego uśmiechu. Chciałbym znów usłyszeć Twój śmiech, poczuć ciepło Twoich dłoni i spojrzeć w Twoje oczy. Twój dziubasek czeka i chcę, aby ten zegar odliczał chwile do naszego spotkania. ❤️";
-                
-            } else {
-                // Ustawienie interwałów dla funkcji tylko jeśli data nie minęła
-                countdownInterval = setInterval(updateCountdown, 1000);  // Aktualizacja co sekundę
-                messageInterval = setInterval(changeMessage, 10000);   // Zmiana wiadomości co 10 sekund
-                
-                // Pokaż pierwszą wiadomość
-                changeMessage();
-            }
-            
-            // Stwórz pływające serduszka (te zostawiamy niezależnie od stanu odliczania)
-            createFloatingHearts();
-            setInterval(createFloatingHearts, 20000);  // Regeneracja serduszek co 20 sekund
-        }
+        };
         
         // Wywołanie funkcji inicjalizującej po załadowaniu strony
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', () => LoveCountdown.init());
     </script>
 </body>
 </html>
